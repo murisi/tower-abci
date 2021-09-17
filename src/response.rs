@@ -33,7 +33,11 @@ pub use pb::ResponseOfferSnapshot as OfferSnapshot;
 #[doc(inline)]
 pub use pb::ResponseQuery as Query;
 #[doc(inline)]
-pub use pb::ResponseSetOption as SetOption;
+pub use pb::ResponsePrepareProposal as PrepareProposal;
+#[doc(inline)]
+pub use pb::ResponseExtendVote as ExtendVote;
+#[doc(inline)]
+pub use pb::ResponseVerifyVoteExtension as VerifyVoteExtension;
 
 /// An ABCI response.
 #[derive(Debug, Clone)]
@@ -42,7 +46,6 @@ pub enum Response {
     Echo(Echo),
     Flush(Flush),
     Info(Info),
-    SetOption(SetOption),
     InitChain(InitChain),
     Query(Query),
     BeginBlock(BeginBlock),
@@ -54,6 +57,9 @@ pub enum Response {
     OfferSnapshot(OfferSnapshot),
     LoadSnapshotChunk(LoadSnapshotChunk),
     ApplySnapshotChunk(ApplySnapshotChunk),
+    PrepareProposal(PrepareProposal),
+    ExtendVote(ExtendVote),
+    VerifyVoteExtension(VerifyVoteExtension),
 }
 
 impl Into<pb::Response> for Response {
@@ -64,7 +70,6 @@ impl Into<pb::Response> for Response {
             Response::Echo(x) => Value::Echo(x),
             Response::Flush(x) => Value::Flush(x),
             Response::Info(x) => Value::Info(x),
-            Response::SetOption(x) => Value::SetOption(x),
             Response::InitChain(x) => Value::InitChain(x),
             Response::Query(x) => Value::Query(x),
             Response::BeginBlock(x) => Value::BeginBlock(x),
@@ -76,6 +81,9 @@ impl Into<pb::Response> for Response {
             Response::OfferSnapshot(x) => Value::OfferSnapshot(x),
             Response::LoadSnapshotChunk(x) => Value::LoadSnapshotChunk(x),
             Response::ApplySnapshotChunk(x) => Value::ApplySnapshotChunk(x),
+            Response::PrepareProposal(x) => Value::PrepareProposal(x),
+            Response::ExtendVote(x) => Value::ExtendVote(x),
+            Response::VerifyVoteExtension(x) => Value::VerifyVoteExtension(x),
         });
         pb::Response { value }
     }
@@ -89,6 +97,9 @@ pub enum ConsensusResponse {
     DeliverTx(DeliverTx),
     EndBlock(EndBlock),
     Commit(Commit),
+    PrepareProposal(PrepareProposal),
+    ExtendVote(ExtendVote),
+    VerifyVoteExtension(VerifyVoteExtension),
 }
 
 impl From<ConsensusResponse> for Response {
@@ -99,6 +110,9 @@ impl From<ConsensusResponse> for Response {
             ConsensusResponse::DeliverTx(x) => Self::DeliverTx(x),
             ConsensusResponse::EndBlock(x) => Self::EndBlock(x),
             ConsensusResponse::Commit(x) => Self::Commit(x),
+            ConsensusResponse::PrepareProposal(x) => Self::PrepareProposal(x),
+            ConsensusResponse::ExtendVote(x) => Self::ExtendVote(x),
+            ConsensusResponse::VerifyVoteExtension(x) => Self::VerifyVoteExtension(x),
         }
     }
 }

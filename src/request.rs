@@ -33,7 +33,11 @@ pub use pb::RequestOfferSnapshot as OfferSnapshot;
 #[doc(inline)]
 pub use pb::RequestQuery as Query;
 #[doc(inline)]
-pub use pb::RequestSetOption as SetOption;
+pub use pb::RequestPrepareProposal as PrepareProposal;
+#[doc(inline)]
+pub use pb::RequestExtendVote as ExtendVote;
+#[doc(inline)]
+pub use pb::RequestVerifyVoteExtension as VerifyVoteExtension;
 
 /// An ABCI request.
 #[derive(Clone, PartialEq, Debug)]
@@ -41,7 +45,6 @@ pub enum Request {
     Echo(Echo),
     Flush(Flush),
     Info(Info),
-    SetOption(SetOption),
     InitChain(InitChain),
     Query(Query),
     BeginBlock(BeginBlock),
@@ -53,6 +56,9 @@ pub enum Request {
     OfferSnapshot(OfferSnapshot),
     LoadSnapshotChunk(LoadSnapshotChunk),
     ApplySnapshotChunk(ApplySnapshotChunk),
+    PrepareProposal(PrepareProposal),
+    ExtendVote(ExtendVote),
+    VerifyVoteExtension(VerifyVoteExtension),
 }
 
 impl Request {
@@ -66,6 +72,9 @@ impl Request {
             DeliverTx(_) => MethodKind::Consensus,
             EndBlock(_) => MethodKind::Consensus,
             Commit(_) => MethodKind::Consensus,
+            PrepareProposal(_) => MethodKind::Consensus,
+            ExtendVote(_) => MethodKind::Consensus,
+            VerifyVoteExtension(_) => MethodKind::Consensus,
             CheckTx(_) => MethodKind::Mempool,
             ListSnapshots(_) => MethodKind::Snapshot,
             OfferSnapshot(_) => MethodKind::Snapshot,
@@ -73,7 +82,6 @@ impl Request {
             ApplySnapshotChunk(_) => MethodKind::Snapshot,
             Info(_) => MethodKind::Info,
             Query(_) => MethodKind::Info,
-            SetOption(_) => MethodKind::Info,
             Echo(_) => MethodKind::Info,
         }
     }
@@ -88,7 +96,6 @@ impl TryFrom<pb::Request> for Request {
             Some(Value::Echo(x)) => Ok(Request::Echo(x)),
             Some(Value::Flush(x)) => Ok(Request::Flush(x)),
             Some(Value::Info(x)) => Ok(Request::Info(x)),
-            Some(Value::SetOption(x)) => Ok(Request::SetOption(x)),
             Some(Value::InitChain(x)) => Ok(Request::InitChain(x)),
             Some(Value::Query(x)) => Ok(Request::Query(x)),
             Some(Value::BeginBlock(x)) => Ok(Request::BeginBlock(x)),
@@ -100,6 +107,9 @@ impl TryFrom<pb::Request> for Request {
             Some(Value::OfferSnapshot(x)) => Ok(Request::OfferSnapshot(x)),
             Some(Value::LoadSnapshotChunk(x)) => Ok(Request::LoadSnapshotChunk(x)),
             Some(Value::ApplySnapshotChunk(x)) => Ok(Request::ApplySnapshotChunk(x)),
+            Some(Value::PrepareProposal(x)) => Ok(Request::PrepareProposal(x)),
+            Some(Value::ExtendVote(x)) => Ok(Request::ExtendVote(x)),
+            Some(Value::VerifyVoteExtension(x)) => Ok(Request::VerifyVoteExtension(x)),
             None => Err("no request in proto"),
         }
     }
@@ -112,7 +122,6 @@ impl Into<pb::Request> for Request {
             Request::Echo(x) => Some(Value::Echo(x)),
             Request::Flush(x) => Some(Value::Flush(x)),
             Request::Info(x) => Some(Value::Info(x)),
-            Request::SetOption(x) => Some(Value::SetOption(x)),
             Request::InitChain(x) => Some(Value::InitChain(x)),
             Request::Query(x) => Some(Value::Query(x)),
             Request::BeginBlock(x) => Some(Value::BeginBlock(x)),
@@ -124,6 +133,9 @@ impl Into<pb::Request> for Request {
             Request::OfferSnapshot(x) => Some(Value::OfferSnapshot(x)),
             Request::LoadSnapshotChunk(x) => Some(Value::LoadSnapshotChunk(x)),
             Request::ApplySnapshotChunk(x) => Some(Value::ApplySnapshotChunk(x)),
+            Request::PrepareProposal(x) => Some(Value::PrepareProposal(x)),
+            Request::ExtendVote(x) => Some(Value::ExtendVote(x)),
+            Request::VerifyVoteExtension(x) => Some(Value::VerifyVoteExtension(x)),
         };
         pb::Request { value }
     }
@@ -137,6 +149,9 @@ pub enum ConsensusRequest {
     DeliverTx(DeliverTx),
     EndBlock(EndBlock),
     Commit(Commit),
+    PrepareProposal(PrepareProposal),
+    ExtendVote(ExtendVote),
+    VerifyVoteExtension(VerifyVoteExtension),
 }
 
 impl From<ConsensusRequest> for Request {
@@ -147,6 +162,9 @@ impl From<ConsensusRequest> for Request {
             ConsensusRequest::DeliverTx(x) => Self::DeliverTx(x),
             ConsensusRequest::EndBlock(x) => Self::EndBlock(x),
             ConsensusRequest::Commit(x) => Self::Commit(x),
+            ConsensusRequest::PrepareProposal(x) => Self::PrepareProposal(x),
+            ConsensusRequest::ExtendVote(x) => Self::ExtendVote(x),
+            ConsensusRequest::VerifyVoteExtension(x) => Self::VerifyVoteExtension(x),
         }
     }
 }
@@ -160,6 +178,9 @@ impl TryFrom<Request> for ConsensusRequest {
             Request::DeliverTx(x) => Ok(Self::DeliverTx(x)),
             Request::EndBlock(x) => Ok(Self::EndBlock(x)),
             Request::Commit(x) => Ok(Self::Commit(x)),
+            Request::PrepareProposal(x) => Ok(Self::PrepareProposal(x)),
+            Request::ExtendVote(x) => Ok(Self::ExtendVote(x)),
+            Request::VerifyVoteExtension(x) => Ok(Self::VerifyVoteExtension(x)),
             _ => Err("wrong request type"),
         }
     }
@@ -194,7 +215,6 @@ impl TryFrom<Request> for MempoolRequest {
 pub enum InfoRequest {
     Info(Info),
     Query(Query),
-    SetOption(SetOption),
     Echo(Echo),
 }
 
@@ -203,7 +223,6 @@ impl From<InfoRequest> for Request {
         match req {
             InfoRequest::Info(x) => Self::Info(x),
             InfoRequest::Query(x) => Self::Query(x),
-            InfoRequest::SetOption(x) => Self::SetOption(x),
             InfoRequest::Echo(x) => Self::Echo(x),
         }
     }
@@ -215,7 +234,6 @@ impl TryFrom<Request> for InfoRequest {
         match req {
             Request::Info(x) => Ok(Self::Info(x)),
             Request::Query(x) => Ok(Self::Query(x)),
-            Request::SetOption(x) => Ok(Self::SetOption(x)),
             Request::Echo(x) => Ok(Self::Echo(x)),
             _ => Err("wrong request type"),
         }

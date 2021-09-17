@@ -45,7 +45,6 @@ impl Service<Request> for KVStore {
             // unhandled messages
             Request::Echo(_) => Response::Echo(Default::default()),
             Request::Flush(_) => Response::Flush(Default::default()),
-            Request::SetOption(_) => Response::SetOption(Default::default()),
             Request::InitChain(_) => Response::InitChain(Default::default()),
             Request::BeginBlock(_) => Response::BeginBlock(Default::default()),
             Request::CheckTx(_) => Response::CheckTx(Default::default()),
@@ -54,6 +53,9 @@ impl Service<Request> for KVStore {
             Request::OfferSnapshot(_) => Response::OfferSnapshot(Default::default()),
             Request::LoadSnapshotChunk(_) => Response::LoadSnapshotChunk(Default::default()),
             Request::ApplySnapshotChunk(_) => Response::ApplySnapshotChunk(Default::default()),
+            Request::PrepareProposal(_) => Response::PrepareProposal(Default::default()),
+            Request::ExtendVote(_) => Response::ExtendVote(Default::default()),
+            Request::VerifyVoteExtension(_) => Response::VerifyVoteExtension(Default::default()),
         };
         tracing::info!(?rsp);
         async move { Ok(rsp) }.boxed()
@@ -125,18 +127,18 @@ impl KVStore {
                 r#type: "app".to_string(),
                 attributes: vec![
                     pb::EventAttribute {
-                        key: "key".as_bytes().to_owned(),
-                        value: key.as_bytes().to_owned(),
+                        key: "key".to_owned(),
+                        value: key.to_owned(),
                         index: true,
                     },
                     pb::EventAttribute {
-                        key: "index_key".as_bytes().to_owned(),
-                        value: "index is working".as_bytes().to_owned(),
+                        key: "index_key".to_owned(),
+                        value: "index is working".to_owned(),
                         index: true,
                     },
                     pb::EventAttribute {
-                        key: "noindex_key".as_bytes().to_owned(),
-                        value: "index is working".as_bytes().to_owned(),
+                        key: "noindex_key".to_owned(),
+                        value: "index is working".to_owned(),
                         index: false,
                     },
                 ],

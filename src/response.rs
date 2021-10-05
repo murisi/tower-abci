@@ -127,6 +127,8 @@ impl TryFrom<Response> for ConsensusResponse {
             Response::DeliverTx(x) => Ok(Self::DeliverTx(x)),
             Response::EndBlock(x) => Ok(Self::EndBlock(x)),
             Response::Commit(x) => Ok(Self::Commit(x)),
+            Response::ExtendVote(x) => Ok(Self::ExtendVote(x)),
+            Response::VerifyVoteExtension(x) => Ok(Self::VerifyVoteExtension(x)),
             _ => Err("wrong request type"),
         }
     }

@@ -122,6 +122,7 @@ impl TryFrom<Response> for ConsensusResponse {
     fn try_from(req: Response) -> Result<Self, Self::Error> {
         match req {
             Response::InitChain(x) => Ok(Self::InitChain(x)),
+            Response::PrepareProposal(x) => Ok(Self::PrepareProposal(x)),
             Response::BeginBlock(x) => Ok(Self::BeginBlock(x)),
             Response::DeliverTx(x) => Ok(Self::DeliverTx(x)),
             Response::EndBlock(x) => Ok(Self::EndBlock(x)),

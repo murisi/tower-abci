@@ -8,7 +8,7 @@ license = "MIT"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-tendermint-proto = { git = "https://github.com/heliaxdev/tendermint-rs", branch = "bat/abci++-integration" }
+tendermint-proto = { git = "https://github.com/heliaxdev/tendermint-rs", branch = "yuji/abci++-v0.23.0" }
 bytes = "1"
 tokio = { version = "1", features = ["full"]}
 tokio-util = { version = "0.6", features = ["codec"] }
@@ -17,8 +17,8 @@ tower = { version = "0.4", features = ["full"]}
 pin-project = "1"
 futures = "0.3"
 tracing = "0.1"
-prost = "0.8.0"
-tracing-tower = { git = "https://github.com/tokio-rs/tracing/", branch = "v0.1.x" }
+prost = "0.9.0"
+tracing-tower = { git = "https://github.com/tokio-rs/tracing/", rev = "6cc6c47354ceeb47da7c95faa41c6d29b71b5f37" }
 
 [dev-dependencies]
 structopt = "0.3"
@@ -28,5 +28,5 @@ tracing-subscriber = "0.2"
 doc = []
 
 [patch.crates-io]
-tracing = { git = "https://github.com/tokio-rs/tracing/", branch = "v0.1.x" }
-tracing-subscriber = { git = "https://github.com/tokio-rs/tracing/", branch = "v0.1.x" }
+tracing = { git = "https://github.com/tokio-rs/tracing/", rev = "6cc6c47354ceeb47da7c95faa41c6d29b71b5f37" }
+tracing-subscriber = { git = "https://github.com/tokio-rs/tracing/", rev = "6cc6c47354ceeb47da7c95faa41c6d29b71b5f37" }

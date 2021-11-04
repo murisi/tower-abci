@@ -218,24 +218,55 @@ where
                     match request.kind() {
                         MethodKind::Consensus => {
                             let request = request.try_into().expect("checked kind");
-                            let response = self.consensus.ready().await?.call(request);
-                            // Need to box here for type erasure
-                            responses.push(response.map_ok(Response::from).boxed());
+                            match self.consensus.ready().await {
+                                Ok(consensus) => {
+                                    let response = consensus.call(request);
+                                    // Need to box here for type erasure
+                                    responses.push(response.map_ok(Response::from).boxed());
+                                },
+                                Err(err) => {
+                                    tracing::error!("consensus service is not ready: {}", err);
+                                }
+                            }
                         }
                         MethodKind::Mempool => {
                             let request = request.try_into().expect("checked kind");
-                            let response = self.mempool.ready().await?.call(request);
-                            responses.push(response.map_ok(Response::from).boxed());
+                            match self.mempool.ready().await {
+                                Ok(mempool) => {
+                                    let response = mempool.call(request);
+                                    // Need to box here for type erasure
+                                    responses.push(response.map_ok(Response::from).boxed());
+                                },
+                                Err(err) => {
+                                    tracing::error!("mempool service is not ready: {}", err);
+                                }
+                            }
                         }
                         MethodKind::Snapshot => {
                             let request = request.try_into().expect("checked kind");
-                            let response = self.snapshot.ready().await?.call(request);
-                            responses.push(response.map_ok(Response::from).boxed());
+                            match self.snapshot.ready().await {
+                                Ok(snapshot) => {
+                                    let response = snapshot.call(request);
+                                    // Need to box here for type erasure
+                                    responses.push(response.map_ok(Response::from).boxed());
+                                },
+                                Err(err) => {
+                                    tracing::error!("snapshot service is not ready: {}", err);
+                                }
+                            }
                         }
                         MethodKind::Info => {
                             let request = request.try_into().expect("checked kind");
-                            let response = self.info.ready().await?.call(request);
-                            responses.push(response.map_ok(Response::from).boxed());
+                            match self.info.ready().await {
+                                Ok(info) => {
+                                    let response = info.call(request);
+                                    // Need to box here for type erasure
+                                    responses.push(response.map_ok(Response::from).boxed());
+                                },
+                                Err(err) => {
+                                    tracing::error!("info service is not ready: {}", err);
+                                }
+                            }
                         }
                         MethodKind::Flush => {
                             // Instead of propagating Flush requests to the application,

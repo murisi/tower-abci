@@ -160,7 +160,14 @@ where
                         info: self.info.clone(),
                         snapshot: self.snapshot.clone(),
                     };
-                    tokio::spawn(async move { conn.run(socket).await.unwrap() }.instrument(span));
+                    match tokio::spawn( async move { conn.run(socket).await }.instrument(span)).await {
+                        Ok(Err(e)) => return Err(e),
+                        Err(e) => {
+                            tracing::warn!({ %e }, "tcp connection panicked");
+                            return Err(BoxError::from(e));
+                        }
+                        _ => {}
+                    }
                 }
                 Err(e) => {
                     tracing::warn!({ %e }, "error accepting new tcp connection");

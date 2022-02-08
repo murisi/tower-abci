@@ -16,16 +16,17 @@ tokio-stream = "0.1"
 tower = { version = "0.4", features = ["full"]}
 pin-project = "1"
 futures = "0.3"
-tracing = "0.1.30"
+tracing = "0.1"
 prost = "0.9.0"
-tracing-tower = { git = "https://github.com/tokio-rs/tracing/", tag = "tracing-subscriber-0.3.8"}
+tracing-tower = { git = "https://github.com/tokio-rs/tracing/", rev = "6cc6c47354ceeb47da7c95faa41c6d29b71b5f37" }
 
 [dev-dependencies]
 structopt = "0.3"
-tracing-subscriber = "0.3.8"
+tracing-subscriber = "0.2"
 
 [features]
 doc = []
 
 [patch.crates-io]
-"tracing" = {git = "https://github.com/tokio-rs/tracing/", tag = "tracing-subscriber-0.3.8"}
+tracing = { git = "https://github.com/tokio-rs/tracing/", rev = "6cc6c47354ceeb47da7c95faa41c6d29b71b5f37" }
+tracing-subscriber = { git = "https://github.com/tokio-rs/tracing/", rev = "6cc6c47354ceeb47da7c95faa41c6d29b71b5f37" }

@@ -147,6 +147,7 @@ where
         let listener = TcpListener::bind(addr).await?;
         let local_addr = listener.local_addr()?;
         tracing::info!(?local_addr, "bound tcp listener");
+        let (error_sender, mut error_receiver) = tokio::sync::mpsc::channel(1);
 
         loop {
             match listener.accept().await {
@@ -160,18 +161,21 @@ where
                         info: self.info.clone(),
                         snapshot: self.snapshot.clone(),
                     };
-                    match tokio::spawn( async move { conn.run(socket).await }.instrument(span)).await {
-                        Ok(Err(e)) => return Err(e),
-                        Err(e) => {
-                            tracing::warn!({ %e }, "tcp connection panicked");
-                            return Err(BoxError::from(e));
+                    let error_sender = error_sender.clone();
+                    tokio::spawn(async move {
+                        if let Err(e) = conn.run(socket).await {
+                            let _ = error_sender.send(e).await;
                         }
-                        _ => {}
-                    }
+
+                    }.instrument(span));
                 }
                 Err(e) => {
                     tracing::warn!({ %e }, "error accepting new tcp connection");
                 }
+            }
+
+            if let Ok(e) = error_receiver.try_recv() {
+                return Err(e);
             }
         }
     }
